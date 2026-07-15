@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.cts</groupId>
-	<artifactId>common</artifactId>
+	<artifactId>adstudio</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name/>
 	<description/>

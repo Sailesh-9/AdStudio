@@ -1,10 +1,10 @@
-package com.cts.common;
+package com.cts.adstudio;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class CommonApplicationTests {
+class DeliveryApplicationTests {
 
 	@Test
 	void contextLoads() {
