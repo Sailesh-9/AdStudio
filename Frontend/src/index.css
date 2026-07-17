@@ -1,0 +1,197 @@
+/* ============================================================
+   AdStudio · Design System Tokens
+   Palette: Navy (primary) + White, with sky-blue accent used
+   sparingly, and green/red reserved for specific actions only.
+   ============================================================ */
+
+:root {
+  /* ---- Navy scale (primary brand) ---- */
+  --navy-950: #060e22;
+  --navy-900: #0a1733; /* deep sidebar */
+  --navy-800: #0e1f44;
+  --navy-700: #122a5c; /* brand primary */
+  --navy-600: #18367a;
+  --navy-500: #1f4396; /* primary button */
+  --navy-400: #2f5bc4;
+  --navy-300: #5b82de;
+
+  /* ---- Sky-blue accent (use sparingly) ---- */
+  --sky-600: #2b7af0;
+  --sky-500: #3d8bff;
+  --sky-400: #5fa3ff;
+  --sky-200: #b9d6ff;
+  --sky-100: #dcebff;
+  --sky-50: #eef5ff;
+
+  /* ---- Neutrals ---- */
+  --white: #ffffff;
+  --paper: #f6f8fd; /* app background */
+  --cloud: #eef2fa; /* subtle fills */
+  --line: #e4eaf4; /* borders */
+  --line-soft: #eef2f9;
+  --slate-400: #8a98b8;
+  --slate-500: #6c7a9c;
+  --slate-600: #515f7e;
+  --slate-700: #3a4763;
+  --ink: #121b30; /* headings */
+
+  /* ---- Semantic (reserved, limited use) ---- */
+  --green-600: #0f9a67;
+  --green-500: #16a571;
+  --green-50: #e6f7f0;
+  --red-600: #d32f45;
+  --red-500: #e23b50;
+  --red-50: #fdecef;
+  --amber-600: #d9912b;
+  --amber-500: #eca33d;
+  --amber-50: #fdf4e4;
+
+  /* ---- Shadows ---- */
+  --shadow-xs: 0 1px 2px rgba(14, 31, 68, 0.06);
+  --shadow-sm: 0 2px 8px rgba(14, 31, 68, 0.07);
+  --shadow: 0 6px 20px rgba(14, 31, 68, 0.08);
+  --shadow-md: 0 12px 32px rgba(14, 31, 68, 0.10);
+  --shadow-lg: 0 24px 60px rgba(10, 23, 51, 0.18);
+
+  /* ---- Radii ---- */
+  --r-xs: 6px;
+  --r-sm: 9px;
+  --r: 13px;
+  --r-md: 18px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  /* ---- Type ---- */
+  --font-display: "Sora", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  /* ---- Layout metrics ---- */
+  --sidebar-w: 264px;
+  --navbar-h: 68px;
+}
+
+/* ---------------- Reset ---------------- */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-body);
+  background: var(--paper);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5 {
+  font-family: var(--font-display);
+  color: var(--ink);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+a {
+  color: var(--navy-500);
+  text-decoration: none;
+}
+
+button {
+  font-family: inherit;
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 14px;
+}
+
+ul {
+  list-style: none;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Numbers in tables/metrics line up nicely */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---------------- Scrollbars ---------------- */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--slate-400) transparent;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #c2cce0;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #aab7d2;
+  background-clip: padding-box;
+}
+
+/* ---------------- Focus visibility (a11y floor) ---------------- */
+:focus-visible {
+  outline: 3px solid var(--sky-200);
+  outline-offset: 1px;
+  border-radius: 4px;
+}
+
+/* ---------------- Reduced motion ---------------- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+}
+
+/* ---------------- Shared animations ---------------- */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+@keyframes shimmer {
+  0% { background-position: -400px 0; }
+  100% { background-position: 400px 0; }
+}
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.45; transform: scale(0.8); }
+}

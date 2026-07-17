@@ -1,0 +1,158 @@
+import React, { useState } from "react";
+import { useNavigate, Link } from "react-router-dom";
+import Logo from "../../assets/Logo.jsx";
+import { AuthAvatar, LoginArt } from "../../assets/LoginArt.jsx";
+import { IcMail, IcLock, IcInfo, IcAlert, IcGlobe, IcCheckCircle } from "../../assets/icons.jsx";
+import { useAuth } from "../../context/AuthContext.jsx";
+import "../../styles/auth.css";
+
+const ROLE_PRESETS = [
+  { label: "Admin", email: "admin@adstudio.io" },
+  { label: "Advertiser", email: "advertiser@adstudio.io" },
+  { label: "Planner", email: "planner@adstudio.io" },
+  { label: "Creative", email: "creative@adstudio.io" },
+  { label: "Finance", email: "finance@adstudio.io" },
+];
+
+export default function Login() {
+  const { login } = useAuth();
+  const navigate = useNavigate();
+  const [email, setEmail] = useState("ava.sinclair@adstudio.io");
+  const [password, setPassword] = useState("demo1234");
+  const [error, setError] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  const submit = async (e) => {
+    e.preventDefault();
+    setError("");
+    if (!email || !password) {
+      setError("Enter your email and password to continue.");
+      return;
+    }
+    setBusy(true);
+    const res = await login(email, password);
+    setBusy(false);
+    if (res.ok) navigate("/dashboard");
+    else setError("Sign in failed. Please check your details and try again.");
+  };
+
+  return (
+    <div className="auth">
+      {/* Left brand panel */}
+      <div className="auth-brand">
+        <div className="ab-top">
+          <Logo size={44} className="logo-mark" />
+          <div className="bt">Ad<span>Studio</span></div>
+        </div>
+
+        <div className="ab-mid">
+          <LoginArt className="ab-art" />
+          <h2>Run every campaign from one <span className="hl">command center</span>.</h2>
+          <p>
+            Plan media, manage creative, track delivery and reconcile billing — all in a single
+            workspace built for advertising teams, planners and publishers.
+          </p>
+          <div className="ab-stats">
+            <div className="s"><div className="v">8K+</div><div className="l">Concurrent users</div></div>
+            <div className="s"><div className="v">184M</div><div className="l">Impressions tracked</div></div>
+            <div className="s"><div className="v">99.9%</div><div className="l">Uptime</div></div>
+          </div>
+        </div>
+
+        <div className="ab-foot">
+          <span><IcGlobe size={15} /> Multi-advertiser</span>
+          <span><IcCheckCircle size={15} /> RBAC & audit trails</span>
+        </div>
+      </div>
+
+      {/* Right form panel */}
+      <div className="auth-form-wrap">
+        <div className="auth-card">
+          <AuthAvatar size={76} className="auth-avatar" />
+          <h1>Welcome back</h1>
+          <div className="sub">Sign in to your AdStudio workspace</div>
+
+          <form className="auth-fields" onSubmit={submit}>
+            {error && (
+              <div className="auth-err">
+                <IcAlert size={16} /> {error}
+              </div>
+            )}
+
+            <div className="field">
+              <label htmlFor="email">Work email</label>
+              <div className="input-icon">
+                <IcMail />
+                <input
+                  id="email"
+                  type="email"
+                  className="input"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@company.com"
+                  autoComplete="username"
+                />
+              </div>
+            </div>
+
+            <div className="field">
+              <label htmlFor="password">Password</label>
+              <div className="input-icon">
+                <IcLock />
+                <input
+                  id="password"
+                  type="password"
+                  className="input"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  autoComplete="current-password"
+                />
+              </div>
+            </div>
+
+            <div className="auth-row-between">
+              <label className="check">
+                <input type="checkbox" defaultChecked /> Remember me
+              </label>
+              <a href="#forgot" className="link-muted" onClick={(e) => e.preventDefault()}>Forgot password?</a>
+            </div>
+
+            <button type="submit" className="btn btn-primary auth-submit" disabled={busy}>
+              {busy ? "Signing in…" : "Sign in"}
+            </button>
+          </form>
+
+          <div className="auth-divider">QUICK DEMO SIGN-IN</div>
+          <div className="demo-roles">
+            <div className="dr-label">Tap a role to prefill credentials</div>
+            <div className="role-chips">
+              {ROLE_PRESETS.map((r) => (
+                <button
+                  key={r.label}
+                  type="button"
+                  className="role-chip"
+                  onClick={() => { setEmail(r.email); setPassword("demo1234"); }}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          <div className="demo-note">
+            <IcInfo />
+            <span>
+              Demo mode: any email/password works. The app calls <b>localhost:8181</b> and falls
+              back to sample data if no backend is running.
+            </span>
+          </div>
+
+          <div className="auth-alt">
+            New to AdStudio? <Link to="/register" className="link-muted">Create an account</Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

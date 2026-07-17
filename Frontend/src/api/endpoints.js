@@ -1,0 +1,71 @@
+/* ============================================================
+   AdStudio · API endpoints
+   Every backend call goes to a SINGLE port: 8181.
+   These are the dummy endpoint names the frontend talks to.
+   If a real backend is running on 8181 it is used automatically;
+   otherwise each page falls back to local mock data (see hooks/useApiData).
+   ============================================================ */
+
+export const API_BASE = "http://localhost:8181";
+
+export const ENDPOINTS = {
+  // --- access / auth ---
+  eligibilityList: "eligibilityList", // -> ["dashboard","advertiser", ...]
+  login: "auth/login",
+  register: "auth/register",
+
+  // --- dashboard (overview) ---
+  dashboardSummary: "dashboard/summary",
+  dashboardSpendTrend: "dashboard/spend-trend",
+  dashboardChannelMix: "dashboard/channel-mix",
+  recentCampaigns: "dashboard/recent-campaigns",
+
+  // --- advertiser & brand ---
+  advertisers: "advertiser/list",
+  brands: "advertiser/brands",
+
+  // --- campaign planning ---
+  campaignBriefs: "campaign/briefs",
+  targetAudiences: "campaign/target-audiences",
+
+  // --- media plan & insertion orders ---
+  mediaPlans: "mediaplan/list",
+  lineItems: "mediaplan/line-items",
+  insertionOrders: "mediaplan/insertion-orders",
+
+  // --- creative ---
+  creativeAssets: "creative/assets",
+  creativeApprovals: "creative/approvals",
+  assetLinks: "creative/asset-links",
+
+  // --- delivery & pacing ---
+  deliveryRecords: "delivery/records",
+  pacingAlerts: "delivery/pacing-alerts",
+
+  // --- publisher ---
+  publisherInbox: "publisher/io-inbox",
+  publisherDeliveryReports: "publisher/delivery-reports",
+  publisherInvoices: "publisher/invoices",
+
+  // --- finance ---
+  clientInvoices: "finance/client-invoices",
+  publisherInvoiceRecon: "finance/publisher-invoices",
+  paymentTracker: "finance/payment-tracker",
+
+  // --- analytics ---
+  analyticsKpis: "analytics/kpis",
+  analyticsImpressions: "analytics/impressions-trend",
+  analyticsSpendByChannel: "analytics/spend-by-channel",
+  analyticsChannelPerf: "analytics/channel-performance",
+
+  // --- notifications ---
+  notifications: "notifications/list",
+
+  // --- admin ---
+  adminUsers: "admin/users",
+  adminAuditLogs: "admin/audit-logs",
+  adminChannels: "admin/channels",
+  adminRateCards: "admin/rate-cards",
+};
+
+export default ENDPOINTS;
