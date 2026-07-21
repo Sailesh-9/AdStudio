@@ -2,22 +2,15 @@ package com.cts.creative.dto;
 
 import java.time.LocalDateTime;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+public record ApiResponse<T>(
 
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
-public class ApiResponse<T> {
+        boolean success,
 
-    private boolean success;
+        String message,
 
-    private String message;
+        T data,
 
-    private T data;
+        LocalDateTime timestamp
 
-    private LocalDateTime timestamp;
+) {
 }

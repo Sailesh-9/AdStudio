@@ -1,5 +1,6 @@
 package com.cts.creative.entity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -16,21 +17,21 @@ import jakarta.persistence.Table;
 import jakarta.persistence.UniqueConstraint;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Builder.Default;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(
-    name = "creative_assets",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            columnNames = {
-                "assetName",
-                "brandId"
-            }
-        )
-    }
+        name = "creative_assets",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "assetName",
+                                "brandId"
+                        })
+        }
 )
 @Getter
 @Setter
@@ -67,19 +68,25 @@ public class CreativeAsset {
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Default
     @JsonIgnore
     @OneToMany(
-        mappedBy = "asset",
-        cascade = CascadeType.ALL
+            mappedBy = "asset",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<CreativeApproval> approvals;
+    private List<CreativeApproval> approvals =
+            new ArrayList<>();
 
+    @Default
     @JsonIgnore
     @OneToMany(
-        mappedBy = "asset",
-        cascade = CascadeType.ALL
+            mappedBy = "asset",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true
     )
-    private List<AssetLineItemLink> links;
+    private List<AssetLineItemLink> links =
+            new ArrayList<>();
 
     public enum Status {
         DRAFT,

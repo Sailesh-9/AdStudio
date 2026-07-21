@@ -1,7 +1,6 @@
 package com.cts.creative.service;
 
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.List;
@@ -21,17 +20,18 @@ import com.cts.creative.repository.CreativeApprovalRepository;
 import com.cts.creative.repository.CreativeAssetRepository;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
+@Slf4j
 public class CreativeService {
 
     private final CreativeAssetRepository assetRepo;
     private final CreativeApprovalRepository approvalRepo;
     private final AssetLineItemLinkRepository linkRepo;
 
-    // UPLOAD CREATIVE ASSET
     public CreativeAsset upload(
             MultipartFile file,
             Long brandId,
@@ -44,28 +44,41 @@ public class CreativeService {
     ) throws Exception {
 
         if (file == null || file.isEmpty()) {
-            throw new RuntimeException("File cannot be empty");
+            throw new RuntimeException(
+                    "File cannot be empty");
         }
 
-        Path uploadDir = Paths.get(
+        log.info(
+                "Uploading asset {}",
+                assetName);
+
+        var uploadDir = Paths.get(
                 System.getProperty("user.dir"),
                 "uploads"
         );
 
         Files.createDirectories(uploadDir);
 
-        String fileName =
+        log.info(
+                "Project Root Directory : {}",
+                System.getProperty("user.dir"));
+
+        log.info(
+                "Upload Directory : {}",
+                uploadDir.toAbsolutePath());
+
+        var fileName =
                 System.currentTimeMillis()
                         + "_"
                         + file.getOriginalFilename()
-                        .replaceAll("\\s+", "_");
+                                .replaceAll("\\s+", "_");
 
-        Path filePath =
+        var filePath =
                 uploadDir.resolve(fileName);
 
         file.transferTo(filePath.toFile());
 
-        CreativeAsset asset =
+        var asset =
                 CreativeAsset.builder()
                         .brandId(brandId)
                         .campaignBriefId(campaignBriefId)
@@ -75,21 +88,34 @@ public class CreativeService {
                         .width(width)
                         .height(height)
                         .filePath(filePath.toString())
-                        .fileSizeKB((int) (file.getSize() / 1024))
+                        .fileSizeKB(
+                                (int) (file.getSize() / 1024))
                         .version(1)
-                        .status(CreativeAsset.Status.DRAFT)
+                        .status(
+                                CreativeAsset.Status.DRAFT)
                         .build();
+
+        log.info(
+                "Asset uploaded successfully : {}",
+                assetName);
 
         return assetRepo.save(asset);
     }
 
-    // GET ALL ASSETS
     public List<CreativeAsset> getAllAssets() {
+
+        log.info(
+                "Fetching all assets");
+
         return assetRepo.findAll();
     }
 
-    // GET ASSET BY ID
-    public CreativeAsset getAsset(Long assetId) {
+    public CreativeAsset getAsset(
+            Long assetId) {
+
+        log.info(
+                "Fetching asset with id {}",
+                assetId);
 
         return assetRepo.findById(assetId)
                 .orElseThrow(() ->
@@ -97,7 +123,6 @@ public class CreativeService {
                                 "Asset Not Found"));
     }
 
-    // UPDATE ASSET
     public CreativeAsset updateAsset(
             Long assetId,
             MultipartFile file,
@@ -107,7 +132,11 @@ public class CreativeService {
             Integer height
     ) throws Exception {
 
-        CreativeAsset asset =
+        log.info(
+                "Updating asset {}",
+                assetId);
+
+        var asset =
                 assetRepo.findById(assetId)
                         .orElseThrow(() ->
                                 new CreativeNotFoundException(
@@ -122,26 +151,31 @@ public class CreativeService {
 
             if (asset.getFilePath() != null) {
 
-                Path oldFile =
-                        Paths.get(asset.getFilePath());
+                var oldFile =
+                        Paths.get(
+                                asset.getFilePath());
 
                 Files.deleteIfExists(oldFile);
             }
 
-            Path uploadDir = Paths.get(
+            var uploadDir = Paths.get(
                     System.getProperty("user.dir"),
                     "uploads"
             );
 
             Files.createDirectories(uploadDir);
 
-            String fileName =
+            log.info(
+                    "Upload Directory : {}",
+                    uploadDir.toAbsolutePath());
+
+            var fileName =
                     System.currentTimeMillis()
                             + "_"
                             + file.getOriginalFilename()
-                            .replaceAll("\\s+", "_");
+                                    .replaceAll("\\s+", "_");
 
-            Path filePath =
+            var filePath =
                     uploadDir.resolve(fileName);
 
             file.transferTo(filePath.toFile());
@@ -154,79 +188,105 @@ public class CreativeService {
 
             asset.setVersion(
                     asset.getVersion() + 1);
+
+            log.info(
+                    "Asset file updated for asset {}",
+                    assetId);
         }
 
         return assetRepo.save(asset);
     }
 
-    // DELETE ASSET
-    public void deleteAsset(Long assetId) {
+    public void deleteAsset(
+            Long assetId) {
 
-        CreativeAsset asset =
+        log.info(
+                "Deleting asset {}",
+                assetId);
+
+        var asset =
                 assetRepo.findById(assetId)
                         .orElseThrow(() ->
                                 new CreativeNotFoundException(
                                         "Asset Not Found"));
 
-        if (asset.getLinks() != null
-                && !asset.getLinks().isEmpty()) {
+        if (!asset.getLinks().isEmpty()) {
 
             throw new RuntimeException(
                     "Asset is linked with line items and cannot be deleted");
         }
 
         assetRepo.delete(asset);
+
+        log.info(
+                "Asset deleted {}",
+                assetId);
     }
 
-    // APPROVE OR REJECT ASSET
     public CreativeApproval approveAsset(
             Long assetId,
             ApprovalRequest request) {
 
-        CreativeAsset asset =
+        log.info(
+                "Approval request received for asset {}",
+                assetId);
+
+        var asset =
                 assetRepo.findById(assetId)
                         .orElseThrow(() ->
                                 new CreativeNotFoundException(
                                         "Asset Not Found"));
 
-        if ("Approved".equalsIgnoreCase(
-                request.getDecision())) {
+        asset.setStatus(
+                switch (
+                        request.decision()
+                                .toUpperCase()) {
 
-            asset.setStatus(
-                    CreativeAsset.Status.APPROVED);
+                    case "APPROVED" ->
+                            CreativeAsset.Status.APPROVED;
 
-        } else {
+                    case "REJECTED" ->
+                            CreativeAsset.Status.REJECTED;
 
-            asset.setStatus(
-                    CreativeAsset.Status.REJECTED);
-        }
+                    default ->
+                            CreativeAsset.Status.REJECTED;
+                });
 
         assetRepo.save(asset);
 
-        CreativeApproval approval =
+        var approval =
                 CreativeApproval.builder()
                         .asset(asset)
                         .reviewerId(
-                                request.getReviewerId())
+                                request.reviewerId())
                         .reviewDate(
                                 LocalDate.now())
                         .decision(
-                                request.getDecision())
+                                request.decision())
                         .feedback(
-                                request.getFeedback())
+                                request.feedback())
                         .status("COMPLETED")
                         .build();
+
+        log.info(
+                "Asset {} reviewed with decision {}",
+                assetId,
+                request.decision());
 
         return approvalRepo.save(approval);
     }
 
-    // LINK ASSET TO LINE ITEM
     public AssetLineItemLink linkAsset(
             AssetLinkRequest request) {
 
-        CreativeAsset asset =
+        log.info(
+                "Linking asset {} with line item {}",
+                request.assetId(),
+                request.lineItemId());
+
+        var asset =
                 assetRepo.findById(
-                        request.getAssetId())
+                        request.assetId())
                         .orElseThrow(() ->
                                 new CreativeNotFoundException(
                                         "Asset Not Found"));
@@ -240,20 +300,26 @@ public class CreativeService {
 
         if (linkRepo.existsByAssetAndLineItemId(
                 asset,
-                request.getLineItemId())) {
+                request.lineItemId())) {
 
             throw new RuntimeException(
                     "Duplicate Link Not Allowed");
         }
 
-        AssetLineItemLink link =
+        var link =
                 AssetLineItemLink.builder()
                         .asset(asset)
                         .lineItemId(
-                                request.getLineItemId())
-                        .linkedDate(LocalDate.now())
+                                request.lineItemId())
+                        .linkedDate(
+                                LocalDate.now())
                         .status("ACTIVE")
                         .build();
+
+        log.info(
+                "Asset {} linked successfully to line item {}",
+                request.assetId(),
+                request.lineItemId());
 
         return linkRepo.save(link);
     }

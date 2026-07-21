@@ -18,15 +18,14 @@ import lombok.Setter;
 
 @Entity
 @Table(
-    name = "asset_line_item_links",
-    uniqueConstraints = {
-        @UniqueConstraint(
-            columnNames = {
-                "asset_id",
-                "lineItemId"
-            }
-        )
-    }
+        name = "asset_line_item_links",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        columnNames = {
+                                "asset_id",
+                                "lineItemId"
+                        })
+        }
 )
 @Getter
 @Setter

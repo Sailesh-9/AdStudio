@@ -2,16 +2,16 @@ package com.cts.creative.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.Data;
 
-@Data
-public class ApprovalRequest {
+public record ApprovalRequest(
 
-    @NotNull(message = "Reviewer Id is required")
-    private Long reviewerId;
+        @NotNull
+        Long reviewerId,
 
-    @NotBlank(message = "Decision is required")
-    private String decision;
+        @NotBlank
+        String decision,
 
-    private String feedback;
+        String feedback
+
+) {
 }
