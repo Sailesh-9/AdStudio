@@ -1,9 +1,11 @@
 package com.cts.creative.creativeexception;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.bind.annotation.*;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
@@ -12,6 +14,10 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleNotFound(
             CreativeNotFoundException ex) {
 
+        log.error(
+                "Creative Not Found: {}",
+                ex.getMessage());
+
         return ResponseEntity.badRequest()
                 .body(ex.getMessage());
     }
@@ -19,6 +25,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGeneral(
             Exception ex) {
+
+        log.error(
+                "Unexpected Exception",
+                ex);
 
         return ResponseEntity.internalServerError()
                 .body(ex.getMessage());
